@@ -92,7 +92,6 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  // MX_USART2_UART_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   HAL_ADC_Start(&hadc1);
@@ -103,14 +102,16 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  // begin the sensor tracking
 	  HAL_ADC_Start(&hadc1);
-//	  	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, 1);
-//	      HAL_Delay(20);
-	      HAL_ADC_PollForConversion(&hadc1,1000);
-	      readValue = HAL_ADC_GetValue(&hadc1);
-	      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
-	      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 0);
-	      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 0);
+	  HAL_ADC_PollForConversion(&hadc1,1000);
+	  readValue = HAL_ADC_GetValue(&hadc1);
+	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 0);
+	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 0);
+
+	  // checks to see the readvalue of sensor to allow what light to adjust
+	  // shows red
 	      if (readValue > 2500)
 	      {
 	        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10,0);
@@ -118,20 +119,21 @@ int main(void)
 	        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8,1);
 	      }
 
-	      // else statement to turn off red light and repat for remaing
+	      // shows yellow
 	      else if (readValue > 2000 ){
 	    	 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10,0);
 	    	 HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
 	    	 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8,0);
 	      }
+	      //shows green
 	      else{
 
 	    	 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10,1);
 	    	 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 0);
 	    	 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9,0);
 	      }
-	      //HAL_Delay(1000);
-    /* USER CODE END WHILE */
+
+	    /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }

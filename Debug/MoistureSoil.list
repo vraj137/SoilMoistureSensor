@@ -802,28 +802,25 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
  8000974:	f000 f946 	bl	8000c04 <MX_GPIO_Init>
-  // MX_USART2_UART_Init();
   MX_ADC1_Init();
  8000978:	f000 f8f2 	bl	8000b60 <MX_ADC1_Init>
   /* USER CODE BEGIN 2 */
   HAL_ADC_Start(&hadc1);
  800097c:	483e      	ldr	r0, [pc, #248]	; (8000a78 <main+0x110>)
  800097e:	f000 fb4f 	bl	8001020 <HAL_ADC_Start>
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  // begin the sensor tracking
 	  HAL_ADC_Start(&hadc1);
  8000982:	483d      	ldr	r0, [pc, #244]	; (8000a78 <main+0x110>)
  8000984:	f000 fb4c 	bl	8001020 <HAL_ADC_Start>
-//	  	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, 1);
-//	      HAL_Delay(20);
-	      HAL_ADC_PollForConversion(&hadc1,1000);
+	  HAL_ADC_PollForConversion(&hadc1,1000);
  8000988:	f44f 717a 	mov.w	r1, #1000	; 0x3e8
  800098c:	483a      	ldr	r0, [pc, #232]	; (8000a78 <main+0x110>)
  800098e:	f000 fbfb 	bl	8001188 <HAL_ADC_PollForConversion>
-	      readValue = HAL_ADC_GetValue(&hadc1);
+	  readValue = HAL_ADC_GetValue(&hadc1);
  8000992:	4839      	ldr	r0, [pc, #228]	; (8000a78 <main+0x110>)
  8000994:	f000 fc83 	bl	800129e <HAL_ADC_GetValue>
  8000998:	4603      	mov	r3, r0
@@ -833,21 +830,24 @@ int main(void)
  80009a2:	460b      	mov	r3, r1
  80009a4:	4935      	ldr	r1, [pc, #212]	; (8000a7c <main+0x114>)
  80009a6:	e9c1 2300 	strd	r2, r3, [r1]
-	      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
  80009aa:	2200      	movs	r2, #0
  80009ac:	f44f 6180 	mov.w	r1, #1024	; 0x400
  80009b0:	4833      	ldr	r0, [pc, #204]	; (8000a80 <main+0x118>)
  80009b2:	f001 f909 	bl	8001bc8 <HAL_GPIO_WritePin>
-	      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 0);
+	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 0);
  80009b6:	2200      	movs	r2, #0
  80009b8:	f44f 7100 	mov.w	r1, #512	; 0x200
  80009bc:	4830      	ldr	r0, [pc, #192]	; (8000a80 <main+0x118>)
  80009be:	f001 f903 	bl	8001bc8 <HAL_GPIO_WritePin>
-	      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 0);
+	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 0);
  80009c2:	2200      	movs	r2, #0
  80009c4:	f44f 7180 	mov.w	r1, #256	; 0x100
  80009c8:	482d      	ldr	r0, [pc, #180]	; (8000a80 <main+0x118>)
  80009ca:	f001 f8fd 	bl	8001bc8 <HAL_GPIO_WritePin>
+
+	  // checks to see the readvalue of sensor to allow what light to adjust
+	  // shows red
 	      if (readValue > 2500)
  80009ce:	4b2b      	ldr	r3, [pc, #172]	; (8000a7c <main+0x114>)
  80009d0:	e9d3 0100 	ldrd	r0, r1, [r3]
@@ -876,7 +876,7 @@ int main(void)
  8000a08:	e7bb      	b.n	8000982 <main+0x1a>
 	      }
 
-	      // else statement to turn off red light and repat for remaing
+	      // shows yellow
 	      else if (readValue > 2000 ){
  8000a0a:	4b1c      	ldr	r3, [pc, #112]	; (8000a7c <main+0x114>)
  8000a0c:	e9d3 0100 	ldrd	r0, r1, [r3]
@@ -902,6 +902,7 @@ int main(void)
  8000a3e:	f001 f8c3 	bl	8001bc8 <HAL_GPIO_WritePin>
  8000a42:	e79e      	b.n	8000982 <main+0x1a>
 	      }
+	      //shows green
 	      else{
 
 	    	 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10,1);
